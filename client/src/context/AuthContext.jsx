@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react'
 
+// Auth Context for KodeNote
 export const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {

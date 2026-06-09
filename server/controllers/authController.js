@@ -2,7 +2,7 @@ const User = require('../models/User')
 const bcrypt = require('bcryptjs')
 const generateToken = require('../utils/generateToken')
 
-
+// Auth Controller for KodeNote
 // Register User
 const registerUser = async (req, res) => {
   try {

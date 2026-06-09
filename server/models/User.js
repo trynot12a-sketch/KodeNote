@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 
+// User Schema for KodeNote
 const userSchema = new mongoose.Schema(
   {
     username: {

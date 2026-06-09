@@ -1,44 +1,18 @@
 const Snippet = require('../models/Snippet')
 
-// @desc    Get all snippets
+// @desc    Get all snippets for logged in user
 // @route   GET /api/snippets
 // @access  Private
 const getSnippets = async (req, res) => {
   try {
-    const snippets = await Snippet.find({ user: req.user.id })
+    const snippets = await Snippet.find({ createdBy: req.user.id }).sort({ createdAt: -1 })
     res.json(snippets)
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: 'Server Error' })
   }
 }
 
-// @desc    Create new snippet
-// @route   POST /api/snippets
-// @access  Private
-const createSnippet = async (req, res) => {
-  try {
-    const { title, code, language, description, tags } = req.body
-
-    if (!title || !code || !language) {
-      return res.status(400).json({ message: 'Please add all required fields' })
-    }
-
-    const snippet = await Snippet.create({
-      user: req.user.id,
-      title,
-      code,
-      language,
-      description,
-      tags
-    })
-
-    res.status(201).json(snippet)
-  } catch (error) {
-    res.status(500).json({ message: error.message })
-  }
-}
-
-// @desc    Get snippet by ID
+// @desc    Get single snippet
 // @route   GET /api/snippets/:id
 // @access  Private
 const getSnippetById = async (req, res) => {
@@ -49,18 +23,38 @@ const getSnippetById = async (req, res) => {
       return res.status(404).json({ message: 'Snippet not found' })
     }
 
-    // Check for user
-    if (snippet.user.toString() !== req.user.id) {
-      return res.status(401).json({ message: 'User not authorized' })
+    if (snippet.createdBy.toString() !== req.user.id) {
+      return res.status(401).json({ message: 'Not authorized' })
     }
 
     res.json(snippet)
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: 'Server Error' })
   }
 }
 
-// @desc    Update snippet
+// @desc    Create a snippet
+// @route   POST /api/snippets
+// @access  Private
+const createSnippet = async (req, res) => {
+  try {
+    const { title, language, code, tags } = req.body
+
+    const snippet = await Snippet.create({
+      title,
+      language,
+      code,
+      tags: tags || [],
+      createdBy: req.user.id
+    })
+
+    res.status(201).json(snippet)
+  } catch (error) {
+    res.status(400).json({ message: 'Invalid snippet data' })
+  }
+}
+
+// @desc    Update a snippet
 // @route   PUT /api/snippets/:id
 // @access  Private
 const updateSnippet = async (req, res) => {
@@ -71,26 +65,25 @@ const updateSnippet = async (req, res) => {
       return res.status(404).json({ message: 'Snippet not found' })
     }
 
-    // Check for user
-    if (snippet.user.toString() !== req.user.id) {
-      return res.status(401).json({ message: 'User not authorized' })
+    if (snippet.createdBy.toString() !== req.user.id) {
+      return res.status(401).json({ message: 'Not authorized' })
     }
 
-    const { title, code, language, description, tags } = req.body
+    const { title, language, code, tags } = req.body
 
     const updatedSnippet = await Snippet.findByIdAndUpdate(
       req.params.id,
-      { title, code, language, description, tags },
+      { title, language, code, tags },
       { new: true }
     )
 
     res.json(updatedSnippet)
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(400).json({ message: 'Invalid snippet data' })
   }
 }
 
-// @desc    Delete snippet
+// @desc    Delete a snippet
 // @route   DELETE /api/snippets/:id
 // @access  Private
 const deleteSnippet = async (req, res) => {
@@ -101,23 +94,22 @@ const deleteSnippet = async (req, res) => {
       return res.status(404).json({ message: 'Snippet not found' })
     }
 
-    // Check for user
-    if (snippet.user.toString() !== req.user.id) {
-      return res.status(401).json({ message: 'User not authorized' })
+    if (snippet.createdBy.toString() !== req.user.id) {
+      return res.status(401).json({ message: 'Not authorized' })
     }
 
     await snippet.deleteOne()
 
-    res.json({ id: req.params.id })
+    res.json({ id: req.params.id, message: 'Snippet removed' })
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: 'Server Error' })
   }
 }
 
 module.exports = {
   getSnippets,
-  createSnippet,
   getSnippetById,
+  createSnippet,
   updateSnippet,
   deleteSnippet
 }

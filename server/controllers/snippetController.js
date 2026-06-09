@@ -38,11 +38,12 @@ const getSnippetById = async (req, res) => {
 // @access  Private
 const createSnippet = async (req, res) => {
   try {
-    const { title, language, code, tags } = req.body
+    const { title, language, description, code, tags } = req.body
 
     const snippet = await Snippet.create({
       title,
       language,
+      description,
       code,
       tags: tags || [],
       createdBy: req.user.id
@@ -69,11 +70,11 @@ const updateSnippet = async (req, res) => {
       return res.status(401).json({ message: 'Not authorized' })
     }
 
-    const { title, language, code, tags } = req.body
+    const { title, language, description, code, tags } = req.body
 
     const updatedSnippet = await Snippet.findByIdAndUpdate(
       req.params.id,
-      { title, language, code, tags },
+      { title, language, description, code, tags },
       { new: true }
     )
 

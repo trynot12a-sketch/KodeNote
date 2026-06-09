@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSnippets } from '../context/SnippetContext';
 import { useAuth } from '../context/AuthContext';
-import { Plus, Clock, Hash, Code } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Plus, Clock, Hash, Code, Search } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
   const { snippets, loading } = useSnippets();
   const { user } = useAuth();
 
@@ -25,6 +27,28 @@ const Dashboard = () => {
           Create Snippet
         </Link>
       </header>
+
+      <div className="bg-dark-card border border-dark-border p-6 rounded-2xl flex items-center gap-4 focus-within:border-primary transition-colors">
+        <Search className="text-dark-muted" />
+        <input
+          type="text"
+          placeholder="Quick search snippets..."
+          className="bg-transparent border-none outline-none w-full text-lg"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              navigate(`/search?q=${searchTerm}`);
+            }
+          }}
+        />
+        <button
+          onClick={() => navigate(`/search?q=${searchTerm}`)}
+          className="bg-dark-bg px-4 py-2 rounded-lg text-sm font-bold hover:text-primary transition-colors"
+        >
+          Search
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-dark-card border border-dark-border p-6 rounded-2xl">

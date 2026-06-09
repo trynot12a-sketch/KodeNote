@@ -1,18 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSnippets } from '../context/SnippetContext';
 import { Search as SearchIcon, Hash, Code, ExternalLink } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 const Search = () => {
+  const [searchParams] = useSearchParams();
   const { snippets } = useSnippets();
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(searchParams.get('q') || '');
   const [filterLang, setFilterLang] = useState('all');
+
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q) setQuery(q);
+  }, [searchParams]);
 
   const languages = ['all', ...new Set(snippets.map(s => s.language))];
 
   const filteredSnippets = snippets.filter(snippet => {
     const matchesQuery =
       snippet.title.toLowerCase().includes(query.toLowerCase()) ||
+      (snippet.description && snippet.description.toLowerCase().includes(query.toLowerCase())) ||
       snippet.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
 
     const matchesLang = filterLang === 'all' || snippet.language === filterLang;

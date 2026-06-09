@@ -21,6 +21,10 @@ const snippetSchema = new mongoose.Schema(
       required: [true, 'Please add a programming language'],
       trim: true
     },
+    description: {
+      type: String,
+      trim: true
+    },
     tags: [
       {
         type: String,

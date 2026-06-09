@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useSnippets } from '../context/SnippetContext';
-import { ArrowLeft, Edit2, Trash2, Calendar, Code, Hash, Copy, Check } from 'lucide-react';
+import { ArrowLeft, Edit2, Trash2, Calendar, Code, Hash, Copy, Check, Info } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 const SnippetDetail = () => {
   const { id } = useParams();
@@ -68,6 +69,18 @@ const SnippetDetail = () => {
           </button>
         </div>
       </header>
+
+      {snippet.description && (
+        <div className="bg-dark-card border border-dark-border p-8 rounded-3xl space-y-4">
+          <h3 className="text-lg font-bold flex items-center gap-2 text-primary">
+            <Info className="w-5 h-5" />
+            Description
+          </h3>
+          <div className="prose prose-invert max-w-none text-dark-muted leading-relaxed">
+            <ReactMarkdown>{snippet.description}</ReactMarkdown>
+          </div>
+        </div>
+      )}
 
       <div className="bg-dark-card border border-dark-border rounded-3xl overflow-hidden relative">
         <div className="flex items-center justify-between px-6 py-4 border-b border-dark-border bg-dark-bg/50">

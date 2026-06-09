@@ -11,6 +11,7 @@ const SnippetForm = () => {
   const [formData, setFormData] = useState({
     title: '',
     language: 'javascript',
+    description: '',
     code: '',
     tags: ''
   });
@@ -22,6 +23,7 @@ const SnippetForm = () => {
         setFormData({
           title: snippet.title,
           language: snippet.language,
+          description: snippet.description || '',
           code: snippet.code,
           tags: snippet.tags.join(', ')
         });
@@ -92,6 +94,18 @@ const SnippetForm = () => {
                 ))}
               </select>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-dark-muted flex items-center gap-2">
+              Description (Markdown supported)
+            </label>
+            <textarea
+              className="w-full bg-dark-bg border border-dark-border rounded-xl py-3 px-4 h-24 focus:border-primary focus:outline-none transition-colors resize-none"
+              placeholder="Add some notes or description about this snippet..."
+              value={formData.description}
+              onChange={e => setFormData({...formData, description: e.target.value})}
+            />
           </div>
 
           <div className="space-y-2">

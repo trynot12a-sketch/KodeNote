@@ -1,0 +1,4 @@
+## 2025-06-10 - Exposed Environment Secrets and Missing Input Validation
+**Vulnerability:** The `server/.env` file was tracked by Git, exposing `MONGO_URI` and `JWT_SECRET`. Additionally, authentication routes lacked proper input validation, making the application susceptible to NoSQL injection and invalid data submission.
+**Learning:** Checking in `.env` files is a common but critical mistake that exposes sensitive credentials. Lack of early validation in Express routes relies solely on database-level constraints or controller logic, which might not be sufficient to prevent malicious payloads (like JSON objects instead of strings in Mongoose queries).
+**Prevention:** Always include `.env` in `.gitignore` from the start and use `git rm --cached` if it's accidentally tracked. Use libraries like `express-validator` to enforce strict input schemas and sanitize user input before it reaches controllers.
